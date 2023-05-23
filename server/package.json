@@ -1,6 +1,6 @@
 {
-    "name": "digitwin-server",
-    "version": "1.0.�",
+    "name": "tandem-sample-react-server",
+    "version": "1.0.0",
     "engines": {
         "node": ">=14.0.0"
     },

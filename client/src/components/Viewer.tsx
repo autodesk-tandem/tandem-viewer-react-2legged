@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import './Viewer.css'
 
 type ViewerProps = {
-    onViewerInitialized?: (viewer: any) => void;
+    onViewerInitialized?: (viewer: Autodesk.Viewing.GuiViewer3D) => void;
     onViewerUninitialized?: () => void;
     onFacilityLoaded?: (facility: any) => void;
     facility?: string | null;
@@ -12,7 +12,7 @@ const Viewer = (props: ViewerProps) => {
     const {
         facility
     } = props;
-    const viewerRef = useRef<any>(null);
+    const viewerRef = useRef<Autodesk.Viewing.GuiViewer3D | null>(null);
     const viewerDOMRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<any>(null);
 
@@ -60,7 +60,7 @@ const Viewer = (props: ViewerProps) => {
 
     useEffect(() => {
         console.debug(`facility: ${facility}`);
-        async function loadFacility(app: any, viewer: any, urn: string) {
+        async function loadFacility(app: any, viewer: Autodesk.Viewing.GuiViewer3D, urn: string) {
             const facility = await app.getFacility(urn);
             const res = await app.displayFacility(facility, false, viewer);
 
@@ -74,7 +74,9 @@ const Viewer = (props: ViewerProps) => {
 
                 appRef.current = app;
             }
-            loadFacility(appRef.current, viewerRef.current, facility);
+            if (viewerRef.current) {
+              loadFacility(appRef.current, viewerRef.current, facility);
+            }
         } else {
             if (appRef.current) {
                 appRef.current.removeCurrentFacility();

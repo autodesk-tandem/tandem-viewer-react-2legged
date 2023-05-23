@@ -3,7 +3,7 @@ import Viewer from './components/Viewer';
 import './App.css'
 
 const App = () => {
-  const viewerRef = useRef<any>(null);
+  const viewerRef = useRef<Autodesk.Viewing.GuiViewer3D | null>(null);
   const facilityRef = useRef<any>(null);
   const [ facilityURN, setFacilityURN ] = useState<string | undefined>();
 
@@ -17,7 +17,7 @@ const App = () => {
     facilityRef.current = facility;
   };
 
-  const onViewerInitialized = async (viewer: any) => {
+  const onViewerInitialized = async (viewer: Autodesk.Viewing.GuiViewer3D) => {
     console.debug(`onViewerInitialized`);
     viewerRef.current = viewer;
   };

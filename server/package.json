@@ -1,0 +1,20 @@
+{
+    "name": "digitwin-server",
+    "version": "1.0.�",
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "scripts": {
+        "start": "node src/server.js",
+        "build": "node node_modules/typescript/bin/tsc -p tsconfig.json"
+    },
+    "dependencies": {
+        "@types/node": "^18.15.11",
+        "axios": "^1.3.5",
+        "express": "^4.18.2",
+        "querystring": "^0.2.1"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.3"
+    }
+}

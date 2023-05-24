@@ -77,10 +77,6 @@ const Viewer = (props: ViewerProps) => {
             if (viewerRef.current) {
               loadFacility(appRef.current, viewerRef.current, facility);
             }
-        } else {
-            if (appRef.current) {
-                appRef.current.removeCurrentFacility();
-            }
         }
     }, [ facility ]);
 

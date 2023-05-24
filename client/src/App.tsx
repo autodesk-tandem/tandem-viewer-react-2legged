@@ -24,7 +24,10 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <div className="header"></div>
+      <div className="header">
+        <div className="header-icon"></div>
+        <div className="header-title">Tandem Test Application (React)</div>
+      </div>
       <div className="main">
         <div className="left-panel">
           <div>

@@ -10,7 +10,8 @@ function init() {
       api: 'dt',
       getAccessToken: getToken,
       productId: 'Digital Twin',
-      corsWorker: true
+      corsWorker: true,
+      useCookie: false
     };
 
     Autodesk.Viewing.Initializer(options, () => {

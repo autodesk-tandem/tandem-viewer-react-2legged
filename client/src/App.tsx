@@ -4,15 +4,15 @@ import './App.css'
 
 const App = () => {
   const viewerRef = useRef<Autodesk.Viewing.GuiViewer3D | null>(null);
-  const facilityRef = useRef<any>(null);
-  const [ facilityURN, setFacilityURN ] = useState<string | undefined>();
+  const facilityRef = useRef<Autodesk.Viewing.Private.DtFacility | null>(null);
+  const [ facilityURN, setFacilityURN ] = useState<string | null>();
 
   const onLoadClick = async () => {
     // TODO: set your own urn
     setFacilityURN('urn:adsk.dtt:ZS-qm-sbQWWJnB5tcwBjhQ');
   };
 
-  const onFacilityLoaded = async (facility: any) => {
+  const onFacilityLoaded = async (facility: Autodesk.Viewing.Private.DtFacility) => {
     console.debug(`onFacilityLoaded`);
     facilityRef.current = facility;
   };

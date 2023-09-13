@@ -15,7 +15,7 @@ const staticPath = path.normalize(`${__dirname}/../app`);
 
 app.use(express.static(staticPath));
 // API endpoints
-app.post('/api/token', async (req, res) => {
+app.post('/api/auth/token', async (req, res) => {
   const token = await createToken();
 
   res.status(200).json(token);
@@ -30,8 +30,8 @@ async function createToken() {
     querystring.stringify(options),
     {
       auth: {
-        username: process.env.FORGE_CLIENT_ID,
-        password: process.env.FORGE_CLIENT_SECRET,
+        username: process.env.APS_KEY,
+        password: process.env.APS_SECRET,
       }
     });
 

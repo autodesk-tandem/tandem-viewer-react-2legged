@@ -1,20 +1,45 @@
 declare namespace Autodesk {
   namespace Viewing {
     namespace Private {
+
+      interface CompactView {
+        id: string;
+        viewName: string;
+        dashboardName: string;
+        label: string;
+        default: boolean;
+      }
+
+      interface View extends CompactView {
+        camera?: any;
+        camera?: cutPlanes;
+        dashboard?: any;
+        createTime?: string;
+      }
+      
       class DtApp {
-        constructor(options?: Object);
+        constructor(options?: any);
 
-        currentFacility: DtFacility;
+        views: DtViews;
 
-        displayFacility(facility: any, visibleModelsForView: any, viewer: Autodesk.Viewing.GuiViewer3D, forceReload?: boolean): Promise<DtFacility>;
-        getFacility(urn: string): Promise<DtFacility>;
-        removeCachedFacility(urn: string): void;
+        displayFacility(facility: DtFacility, visibleModelsForView: Set<string> | undefined, viewer: Autodesk.Viewing.GuiViewer3D, forceReload?: boolean): Promise<DtFacility>;
+        getUsersFacilities(): Promise<DtFacility[]>;
       }
 
       class DtFacility {
-        unloadModels(): void;
-        urn(): string;
+        settings: {
+          props: { [key: string]: { [key: string]: string; }};
+        };
+        twinId: string;
+
+        getSavedViewsList(): Promise<CompactView[]>;
       }
+
+      class DtViews {
+        fetchFacilityViews(facility: DtFacility): Promise<CompactView[]>;
+        setCurrentView(facility: DtFacility, view: View): Promise<void>;
+      }
+
     }
   }
 }

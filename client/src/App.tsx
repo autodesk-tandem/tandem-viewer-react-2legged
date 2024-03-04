@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Viewer from './components/Viewer';
 import './App.css'
 import { initializeViewer } from './utils/viewerUtils';
 
 const App = () => {
   const [ isViewerInitialized, setIsViewerInitialized ] = useState<boolean>(false);
-  const [ facilityList, setFacilityList ] = useState<Autodesk.Viewing.Private.DtFacility[]>([]);
+  const [ facilityList, setFacilityList ] = useState<Autodesk.Tandem.DtFacility[]>([]);
   const [ selectedFacilityId, setSelectedFacilityId ] = useState<string>();
   const [ selectedFacility, setSelectedFacility ] = useState<any>(null);
 
@@ -26,7 +26,7 @@ const App = () => {
 
   // when app is initialized get list of available facilities for current service
   // and remember id of first facility
-  const onAppInitialized = async (app: Autodesk.Viewing.Private.DtApp) => {
+  const onAppInitialized = async (app: Autodesk.Tandem.DtApp) => {
     console.log(`app initialized`);
     const result = await app.getUsersFacilities();
 

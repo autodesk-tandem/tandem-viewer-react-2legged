@@ -2,9 +2,9 @@ import { useEffect, useRef} from 'react';
 import './Viewer.css';
 
 type ViewerProps = {
-  facility?: Autodesk.Viewing.Private.DtFacility;
-  onAppInitialized?: (app: Autodesk.Viewing.Private.DtApp) => void;
-  onFacilityLoaded?: (facility: Autodesk.Viewing.Private.DtFacility) => void;
+  facility?: Autodesk.Tandem.DtFacility;
+  onAppInitialized?: (app: Autodesk.Tandem.DtApp) => void;
+  onFacilityLoaded?: (facility: Autodesk.Tandem.DtFacility) => void;
   onViewerInitialized?: (viewer: Autodesk.Viewing.GuiViewer3D) => void;
   onViewerUninitialized?: (viewer: Autodesk.Viewing.GuiViewer3D) => void;
 };
@@ -17,13 +17,13 @@ const Viewer = (props: ViewerProps) => {
   const viewerRef = useRef<any>(null);
   const appRef = useRef<any>(null);
 
-  const handleAppInitialized = (app: Autodesk.Viewing.Private.DtApp) => {
+  const handleAppInitialized = (app: Autodesk.Tandem.DtApp) => {
     if (props.onAppInitialized) {
       props.onAppInitialized(app);
     }
   };
 
-  const handleFacilityLoaded = (facility: Autodesk.Viewing.Private.DtFacility) => {
+  const handleFacilityLoaded = (facility: Autodesk.Tandem.DtFacility) => {
     if (props.onFacilityLoaded) {
       props.onFacilityLoaded(facility);
     }
@@ -60,7 +60,7 @@ const Viewer = (props: ViewerProps) => {
       });
       viewer.start();
       // create Tandem application
-      const app = new Autodesk.Viewing.Private.DtApp();
+      const app = new Autodesk.Tandem.DtApp();
       
       appRef.current = app;
       handleAppInitialized(app);
@@ -69,7 +69,7 @@ const Viewer = (props: ViewerProps) => {
 
   // called when facility is updated
   useEffect(() => {
-    async function loadFacility(app: Autodesk.Viewing.Private.DtApp, viewer: Autodesk.Viewing.GuiViewer3D, facility: Autodesk.Viewing.Private.DtFacility) {
+    async function loadFacility(app: Autodesk.Tandem.DtApp, viewer: Autodesk.Viewing.GuiViewer3D, facility: Autodesk.Tandem.DtFacility) {
       const views = await app.views.fetchFacilityViews(facility);
       const view = views.find((v: any) => {
         return v.default;

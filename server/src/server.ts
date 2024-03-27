@@ -2,9 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 
-import axios from 'axios';
-import querystring from 'querystring';
-
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
@@ -22,20 +19,20 @@ app.post('/api/auth/token', async (req, res) => {
 });
 
 async function createToken() {
-  const options = {
+  const auth = Buffer.from(`${process.env.APS_KEY}:${process.env.APS_SECRET}`).toString('base64');
+  const options = new URLSearchParams({
     'grant_type': 'client_credentials',
     'scope': 'data:read viewables:read'
-  };
-  const response = await axios.post(`https://developer.api.autodesk.com/authentication/v2/token`,
-    querystring.stringify(options),
-    {
-      auth: {
-        username: process.env.APS_KEY,
-        password: process.env.APS_SECRET,
-      }
-    });
+  });
+  const response = await fetch(`https://developer.api.autodesk.com/authentication/v2/token?${options}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+    }
+  });
+  const token = await response.json();
 
-  return response.data;
+  return token;
 }
 
 // start listening

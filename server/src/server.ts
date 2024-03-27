@@ -19,7 +19,7 @@ app.post('/api/auth/token', async (req, res) => {
 });
 
 async function createToken() {
-  const auth = Buffer.from(`${process.env.APS_KEY}:${process.env.APS_SECRET}`).toString('base64');
+  const auth = Buffer.from(`${process.env.APS_CLIENT_ID}:${process.env.APS_CLIENT_SECRET}`).toString('base64');
   const options = new URLSearchParams({
     'grant_type': 'client_credentials',
     'scope': 'data:read viewables:read'

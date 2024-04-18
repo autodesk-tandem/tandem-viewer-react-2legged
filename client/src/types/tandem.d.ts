@@ -2,26 +2,28 @@ declare namespace Autodesk {
   namespace Tandem {
     interface CompactView {
       id: string;
-      viewName: string;
       dashboardName: string;
-      label: string;
       default: boolean;
+      facets?: any;
+      label: string;
+      viewName: string;
     }
 
     interface View extends CompactView {
       camera?: any;
-      camera?: cutPlanes;
-      dashboard?: any;
       createTime?: string;
+      dashboard?: any;
     }
 
     class DtApp {
       constructor(options?: any);
 
+      currentFacility: DtFacility;
       views: DtViews;
 
       displayFacility(facility: DtFacility, visibleModelsForView: Set<string> | undefined, viewer: Autodesk.Viewing.GuiViewer3D, forceReload?: boolean): Promise<DtFacility>;
       getCurrentTeamsFacilities(): Promise<DtFacility[]>;
+      getFacility(urn: string): Promise<DtFacility>;
       getUsersFacilities(): Promise<DtFacility[]>;
     }
 
@@ -36,6 +38,8 @@ declare namespace Autodesk {
       twinId: string;
 
       getSavedViewsList(): Promise<CompactView[]>;
+      unloadModels(): void;
+      urn(): string;
       waitForAllModels(): Promise<void>;
     }
 

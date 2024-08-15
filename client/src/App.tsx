@@ -1,18 +1,32 @@
 import React, { useEffect, useState } from 'react';
+import { initializeViewer } from './utils/viewerUtils';
+import TeamList from './components/TeamList';
+import FacilityList from './components/FacilityList';
 import Viewer from './components/Viewer';
 import './App.css'
-import { initializeViewer } from './utils/viewerUtils';
+
 
 const App = () => {
   const [ isViewerInitialized, setIsViewerInitialized ] = useState<boolean>(false);
+  const [ teamList, setTeamList ] = useState<Autodesk.Tandem.DtTeam[]>([]);
   const [ facilityList, setFacilityList ] = useState<Autodesk.Tandem.DtFacility[]>([]);
   const [ selectedFacilityId, setSelectedFacilityId ] = useState<string>();
+  const [ selectedTeam, setSelectedTeam ] = useState<any>(null);
   const [ selectedFacility, setSelectedFacility ] = useState<any>(null);
 
-  const onFacilityChange = (event: any) => {
-    setSelectedFacilityId(event.target.value);
+  const onTeamChange = async (team: Autodesk.Tandem.DtTeam) => {
+    if (!team.facilities) {
+      await team.getFacilities();
+    }
+    setSelectedTeam(team);
   };
 
+  // remember id of selected facility when user changes selection
+  const onFacilityChange = (facility: Autodesk.Tandem.DtFacility) => {
+    setSelectedFacilityId(facility.twinId);
+  };
+
+  // set selected facility based on selected id
   const onLoad = async () => {
     const facility = facilityList?.find(f => {
       return f.twinId === selectedFacilityId;
@@ -24,42 +38,44 @@ const App = () => {
     setSelectedFacility(facility);
   };
 
-  // when app is initialized get list of available facilities for current service
-  // and remember id of first facility
+  // when app is initialized get list of teams
   const onAppInitialized = async (app: Autodesk.Tandem.DtApp) => {
     console.log(`app initialized`);
-    const userFacilities = await app.getUsersFacilities();
-    const teamsFacilities = await app.getCurrentTeamsFacilities();
-    const result = [];
+    const teams = await app.getTeams();
+    const sortedTeams = teams.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
 
-    result.push(...userFacilities);
-    result.push(...teamsFacilities);
-    setFacilityList(result);
-    if (result.length > 0) {
-      setSelectedFacilityId(result[0].twinId);
+    const sharedFacilities = await app.getUsersFacilities();
+
+    if (sharedFacilities?.length > 0) {
+      const dummyTeam = {
+        id: 'shared',
+        name: '** Shared directly **',
+        owner: '',
+        facilities: sharedFacilities
+      };
+
+      // @ts-ignore
+      sortedTeams.unshift(dummyTeam);
     }
+
+    setTeamList(sortedTeams);
   };
 
-  // called when component is mounted
-  // we initialize viewer and wait for user to select facility
   useEffect(() => {
     initializeViewer().then(() => {
       setIsViewerInitialized(true);
     });
   }, []);
 
-  const facilityItems = facilityList?.map((item) => {
-    console.log(item);
-    let name = item.settings.props['Identity Data']['Project Name'];
-
-    if (name.length === 0) {
-      // if project name is empty then use building name
-      name = item.settings.props['Identity Data']['Building Name'];
+   // called when team selection changes
+   useEffect(() => {
+    if (!selectedTeam) {
+      return;
     }
-    return (
-      <option key={item.twinId} value={item.twinId}>{name}</option>
-    );
-  });
+    setFacilityList(selectedTeam.facilities);
+  }, [ selectedTeam ]);
 
   return (
     <React.Fragment>
@@ -69,7 +85,12 @@ const App = () => {
       </div>
       <div className="main">
         <div className="left">
-          <select onChange={onFacilityChange}>{facilityItems}</select>
+          <TeamList
+            teams={teamList}
+            onTeamChange={onTeamChange} />
+          <FacilityList
+            facilities={facilityList}
+            onFacilityChange={onFacilityChange} />
           <button onClick={onLoad}>Load</button>
         </div>
         <div className="right">

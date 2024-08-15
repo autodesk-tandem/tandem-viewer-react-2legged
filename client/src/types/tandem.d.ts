@@ -24,10 +24,13 @@ declare namespace Autodesk {
       displayFacility(facility: DtFacility, visibleModelsForView: Set<string> | undefined, viewer: Autodesk.Viewing.GuiViewer3D, forceReload?: boolean): Promise<DtFacility>;
       getCurrentTeamsFacilities(): Promise<DtFacility[]>;
       getFacility(urn: string): Promise<DtFacility>;
+      getTeams(): Promise<DtTeam[]>;
       getUsersFacilities(): Promise<DtFacility[]>;
     }
 
     class DtFacility {
+      app: DtApp;
+      facetsManager: FacetsManager;
       modelsList: DtModel[];
       settings: {
         dateCreated: string;
@@ -35,6 +38,7 @@ declare namespace Autodesk {
         links: any[];
         props: { [key: string]: { [key: string]: string; }};
       };
+      systemsManager: any;
       twinId: string;
 
       getSavedViewsList(): Promise<CompactView[]>;
@@ -55,9 +59,25 @@ declare namespace Autodesk {
       getTaggedAssets(): Promise<{ cols: any[]; rows: any[]; }>;
     }
 
+    class DtTeam {
+      id: string;
+      name: string;
+      owner: string;
+      facilities: DtFacility[];
+
+      getFacilities(): Promise<DtFacility[]>;
+    }
+
     class DtViews {
+      currentView: CompactView;
+
       fetchFacilityViews(facility: DtFacility): Promise<CompactView[]>;
       setCurrentView(facility: DtFacility, view: View): Promise<void>;
+    }
+
+    class FacetsManager {
+      applyTheme(facetId: string, colorMap: { [key: string]: any; }): void;
+      generateColorMap(colorMaps: { [key: string]: any; }): { [key: string]: any;};
     }
   }
 }

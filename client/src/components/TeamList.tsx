@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import './TeamList.css';
 
 type TeamListProps = {
@@ -18,9 +18,9 @@ const TeamList = (props: TeamListProps) => {
     }
   }, [ teams ]);
 
-  const handleTeamChange = (event: any) => {
+  const handleTeamChange = useCallback((event: any) => {
     const id = event.target.value;
-    const team = props.teams?.find((item) => {
+    const team = teams?.find((item) => {
       return item.id === id;
     });
 
@@ -30,7 +30,7 @@ const TeamList = (props: TeamListProps) => {
     if (onTeamChange) {
       onTeamChange(team);
     }
-  };
+  }, [ teams, onTeamChange ]);
 
   const teamItems = props.teams?.map((item) => {
     return (

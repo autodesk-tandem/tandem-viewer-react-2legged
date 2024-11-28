@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import './FacilityList.css';
 
 type FacilityListProps = {
@@ -18,7 +18,7 @@ const FacilityList = (props: FacilityListProps) => {
     }
   }, [ facilities ]);
 
-  const handleFacilityChange = (event: any) => {
+  const handleFacilityChange = useCallback((event: any) => {
     const id = event.target.value;
     const facility = facilities?.find((item) => {
       return item.twinId === id;
@@ -30,7 +30,7 @@ const FacilityList = (props: FacilityListProps) => {
     if (onFacilityChange) {
       onFacilityChange(facility);
     }
-  };
+  }, [ facilities, onFacilityChange ]);
 
   const facilityItems = props.facilities?.map((item) => {
     let name = item.settings.props['Identity Data']['Building Name'];

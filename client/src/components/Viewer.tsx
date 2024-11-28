@@ -3,7 +3,10 @@ import './Viewer.css';
 
 type ViewerProps = {
   facility?: Autodesk.Tandem.DtFacility;
+  view?: Autodesk.Tandem.CompactView;
   onAppInitialized?: (app: Autodesk.Tandem.DtApp) => void;
+  onCurrentViewChanged?: (view: Autodesk.Tandem.CompactView) => void;
+  onFacetsLoaded?: (event: any) => void;
   onFacilityLoaded?: (facility: Autodesk.Tandem.DtFacility) => void;
   onViewerInitialized?: (viewer: Autodesk.Viewing.GuiViewer3D) => void;
   onViewerUninitialized?: (viewer: Autodesk.Viewing.GuiViewer3D) => void;
@@ -11,7 +14,8 @@ type ViewerProps = {
 
 const Viewer = (props: ViewerProps) => {
   const {
-    facility
+    facility,
+    view
   } = props;
   const viewerDOMRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<any>(null);
@@ -20,6 +24,18 @@ const Viewer = (props: ViewerProps) => {
   const handleAppInitialized = (app: Autodesk.Tandem.DtApp) => {
     if (props.onAppInitialized) {
       props.onAppInitialized(app);
+    }
+  };
+
+  const handleCurrentViewChanged = (view: Autodesk.Tandem.CompactView) => {
+    if (props.onCurrentViewChanged) {
+      props.onCurrentViewChanged(view);
+    }
+  };
+
+  const handleFacetsLoaded = (model: Autodesk.Tandem.DtModel) => {
+    if (props.onFacetsLoaded) {
+      props.onFacetsLoaded(model);
     }
   };
 
@@ -63,29 +79,38 @@ const Viewer = (props: ViewerProps) => {
       const app = new Autodesk.Tandem.DtApp();
       
       appRef.current = app;
+      app.addEventListener(Autodesk.Tandem.DT_FACETS_LOADED, (e) => {
+        handleFacetsLoaded(e.model);
+      });
+      app.views.addEventListener(Autodesk.Tandem.DT_CURRENT_VIEW_CHANGED_EVENT, (e) => {
+        handleCurrentViewChanged(e.detail);
+      });
       handleAppInitialized(app);
     }
   }, []);
 
   // called when facility is updated
   useEffect(() => {
-    async function loadFacility(app: Autodesk.Tandem.DtApp, viewer: Autodesk.Viewing.GuiViewer3D, facility: Autodesk.Tandem.DtFacility) {
-      const views = await app.views.fetchFacilityViews(facility);
-      const view = views.find((v: any) => {
-        return v.default;
-      });
+    async function loadFacility(app: Autodesk.Tandem.DtApp, viewer: Autodesk.Viewing.GuiViewer3D, facility: Autodesk.Tandem.DtFacility, view?: Autodesk.Tandem.CompactView) {
+      let targetView = view;
 
+      if (!targetView) {
+        // view is not provided, try get default view
+        const views = await app.views.fetchFacilityViews(facility);
+
+        targetView = views.find((v: any) => {
+          return v.default;
+        });
+      }
       let models = undefined;
       
-      if (view) {
-        // @ts-ignore
-        models = new Set<string>(view?.facets?.filters?.models);
+      if (targetView) {
+        models = new Set<string>(targetView?.facets?.filters?.models);
       }
-      
       const res = await app.displayFacility(facility, models, viewer);
       
-      if (view) {
-        await app.views.setCurrentView(facility, view);
+      if (targetView) {
+        await app.views.setCurrentView(facility, targetView);
       }
       handleFacilityLoaded(res);
     }
@@ -94,9 +119,9 @@ const Viewer = (props: ViewerProps) => {
       return;
     }
     if (appRef.current && viewerRef.current) {
-      loadFacility(appRef.current, viewerRef.current, facility);
+      loadFacility(appRef.current, viewerRef.current, facility, view);
     }
-  }, [ facility] );
+  }, [ facility, view ] );
 
   return (
     <div className="viewer" ref={viewerDOMRef}></div>

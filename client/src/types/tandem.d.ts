@@ -1,11 +1,11 @@
 declare namespace Autodesk {
   namespace Tandem {
     // events
-    const DT_CURRENT_VIEW_CHANGED_EVENT = 'dtCurrentViewChanged';
-    const DT_FACETS_LOADED = 'dtFacetsLoaded';
-    const DT_STREAM_MARKER_MOUSE_OVER = 'dtStreamMarkerMouseOver';
-    const DT_STREAM_MARKER_MOUSE_OUT = 'dtStreamMarkerMouseOut';
-    const DT_STREAM_MARKER_CHANGED_EVENT = 'dtStreamMarkerChanged'
+    declare const DT_CURRENT_VIEW_CHANGED_EVENT: string;
+    declare const DT_FACETS_LOADED: string;
+    declare const DT_STREAM_MARKER_MOUSE_OVER: string;
+    declare const DT_STREAM_MARKER_MOUSE_OUT: string;
+    declare const DT_STREAM_MARKER_CHANGED_EVENT: string;
 
     interface CompactView {
       id: string;
@@ -90,9 +90,37 @@ declare namespace Autodesk {
       setCurrentView(facility: DtFacility, view: View): Promise<void>;
     }
 
+    class FacetDef {
+      id: string;
+      filter: Set;
+      hidden: boolean;
+      isIntersectionFilter: boolean;
+
+      isLoaded(): boolean;
+    }
+
+    declare const FacetTypes: {
+      assemblyCode: string;
+      attributes: string;
+      categories: string;
+      classifications: string;
+      families: string;
+      levels: string;
+      mepSystems: string;
+      models: string;
+      parameters: string;
+      spaces: string;
+      status: string;
+      systemClasses: string;
+      tandemCategories: string;
+      types: string;
+    };
+
     class FacetsManager {
       applyTheme(facetId: string, colorMap: { [key: string]: any; }): void;
+      getFacetDefs(): FacetDef[];
       generateColorMap(colorMaps: { [key: string]: any; }): { [key: string]: any;};
+      updateFacets(urn?: string, skipIsolationUpdate?: boolean, visile?: boolean): any[];
     }
   }
 }

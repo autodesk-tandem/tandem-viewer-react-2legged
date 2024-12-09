@@ -20,15 +20,15 @@ const ViewList = (props: ViewListProps) => {
 
   const handleViewChange = useCallback((event: any) => {
     const id = event.target.value;
-    const team = views?.find((item) => {
+    const view = views?.find((item) => {
       return item.id === id;
     });
 
-    if (!team) {
+    if (!view) {
       return;
     }
     if (onViewChange) {
-      onViewChange(team);
+      onViewChange(view);
     }
   }, [ views, onViewChange ]);
 

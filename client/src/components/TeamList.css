@@ -1,6 +1,6 @@
 .container {
   padding: 0 4px;
-  width: 180px;
+  width: auto;
 }
 
 .container > select {

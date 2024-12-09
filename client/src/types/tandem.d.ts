@@ -30,7 +30,7 @@ declare namespace Autodesk {
 
       addEventListener(event: string, callback: (event: any) => void): void;
 
-      displayFacility(facility: DtFacility, visibleModelsForView: Set<string> | undefined, viewer: Autodesk.Viewing.GuiViewer3D, forceReload?: boolean): Promise<DtFacility>;
+      displayFacility(facility: DtFacility, initialViewInfo: Set<string> | View | undefined, viewer: Autodesk.Viewing.Viewer3D, forceReload?: boolean): Promise<void>;
       getCurrentTeamsFacilities(): Promise<DtFacility[]>;
       getFacility(urn: string): Promise<DtFacility>;
       getTeams(): Promise<DtTeam[]>;
@@ -86,7 +86,8 @@ declare namespace Autodesk {
 
       addEventListener(event: string, callback: (event: any) => void): void;
 
-      fetchFacilityViews(facility: DtFacility): Promise<CompactView[]>;
+      fetchFacilityViews(facility: DtFacility, forceFetch?: boolean): Promise<CompactView[]>;
+      fetchSpecificView(facility: DtFacility, viewId: string, forceFetch?: boolean): Promise<View>;
       setCurrentView(facility: DtFacility, view: View): Promise<void>;
     }
 

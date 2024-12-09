@@ -102,17 +102,12 @@ const Viewer = (props: ViewerProps) => {
           return v.default;
         });
       }
-      let models = undefined;
-      
-      if (targetView) {
-        models = new Set<string>(targetView?.facets?.filters?.models);
-      }
-      const res = await app.displayFacility(facility, models, viewer);
-      
+      await app.displayFacility(facility, targetView, viewer);
+      // apply view if provided
       if (targetView) {
         await app.views.setCurrentView(facility, targetView);
       }
-      handleFacilityLoaded(res);
+      handleFacilityLoaded(facility);
     }
 
     if (!facility) {

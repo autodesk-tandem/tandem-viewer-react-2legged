@@ -33,8 +33,8 @@ declare namespace Autodesk {
       displayFacility(facility: DtFacility, initialViewInfo: Set<string> | View | undefined, viewer: Autodesk.Viewing.Viewer3D, forceReload?: boolean): Promise<void>;
       getCurrentTeamsFacilities(): Promise<DtFacility[]>;
       getFacility(urn: string): Promise<DtFacility>;
+      getSharedFacilities(forceReload?: boolean): Promise<DtFacility[]>;
       getTeams(): Promise<DtTeam[]>;
-      getUsersFacilities(): Promise<DtFacility[]>;
     }
 
     class DtFacility {
@@ -46,6 +46,7 @@ declare namespace Autodesk {
         dateModified: string;
         links: any[];
         props: { [key: string]: { [key: string]: string; }};
+        template: any;
       };
       twinId: string;
       viewer: Autodesk.Viewing.GuiViewer3D;

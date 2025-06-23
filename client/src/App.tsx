@@ -64,7 +64,7 @@ const App = () => {
       return a.name.localeCompare(b.name);
     });
 
-    const sharedFacilities = await app.getUsersFacilities();
+    const sharedFacilities = await app.getSharedFacilities();
 
     if (sharedFacilities?.length > 0) {
       const dummyTeam = {
@@ -79,6 +79,18 @@ const App = () => {
     }
 
     setTeamList(sortedTeams);
+  };
+
+  const onViewerInitialized = () => {
+    console.log(`viewer initialized`);
+  };
+
+  const onFacilityLoaded = (facility: Autodesk.Tandem.DtFacility) => {
+    console.log(`facility loaded: ${facility.twinId}`);
+  };
+
+  const onViewChanged = (view: Autodesk.Tandem.CompactView) => {
+    console.log(`view changed: ${view.id}`);
   };
 
   useEffect(() => {
@@ -139,6 +151,9 @@ const App = () => {
             <div className="viewer-container">
               <Viewer
                 onAppInitialized={onAppInitialized}
+                onCurrentViewChanged={onViewChanged}
+                onFacilityLoaded={onFacilityLoaded}
+                onViewerInitialized={onViewerInitialized}
                 facility={selectedFacility}
                 view={selectedView} />
             </div>

@@ -60,7 +60,10 @@ const Viewer = (props: ViewerProps) => {
   useEffect(() => {
     if (!viewerRef.current && viewerDOMRef.current) {
       const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDOMRef.current, {
-        extensions: [ 'Autodesk.BoxSelection' ],
+        extensions: [
+          'Autodesk.BoxSelection',
+          'Autodesk.CompGeom'
+        ],
         screenModeDelegate: Autodesk.Viewing.NullScreenModeDelegate,
         theme: 'light-theme'
       });
@@ -83,7 +86,7 @@ const Viewer = (props: ViewerProps) => {
         handleFacetsLoaded(e.model);
       });
       app.views.addEventListener(Autodesk.Tandem.DT_CURRENT_VIEW_CHANGED_EVENT, (e) => {
-        handleCurrentViewChanged(e.detail);
+        handleCurrentViewChanged(e.detail.view);
       });
       handleAppInitialized(app);
     }
@@ -103,6 +106,7 @@ const Viewer = (props: ViewerProps) => {
         });
       }
       await app.displayFacility(facility, targetView, viewer);
+      await facility.waitForAllModels();
       // apply view if provided
       if (targetView) {
         await app.views.setCurrentView(facility, targetView);
